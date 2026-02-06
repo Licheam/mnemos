@@ -18,7 +18,7 @@ Mnemos 让 AI Agent 具备跨会话的持久记忆能力。
 
 每次新会话开始时，应按顺序执行以下操作。
 
-首先，从 git 历史更新短期记忆：
+首先，从 git 历史更新短期记忆（现在会自动按类型分组并分析热点文件）：
 ```bash
 mnemos update
 ```
@@ -28,11 +28,25 @@ mnemos update
 mnemos show -t long
 ```
 
+### 核心原则：Agent-First
+- **优先更新 Skill**：功能变更后，优先确保 `.agent/skills/` 下的指引已同步（可使用 `mnemos init --only-skills`）。
+- **安全写入**：始终优先使用 `write_file` 配合 `mnemos write -f` 的流程来更新记忆。
+
 ### 读取记忆
 
 读取全部记忆（长期 + 短期）：
 ```bash
 mnemos show
+```
+
+在记忆中搜索关键词（跨长期和短期）：
+```bash
+mnemos search "关键词"
+```
+
+限定搜索最近 7 天的短期记忆：
+```bash
+mnemos search "关键词" -t short -d 7
 ```
 
 仅读取长期记忆：

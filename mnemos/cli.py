@@ -147,6 +147,17 @@ def compress_memory_cmd(project_path: str = None, days: int = 3) -> None:
     print(result)
 
 
+def search_memory_cmd(keyword: str, project_path: str = None, memory_type: str = "all", days: int = None) -> None:
+    """在记忆中搜索关键词"""
+    from . import search_memory
+    
+    if project_path is None:
+        project_path = Path.cwd()
+        
+    result = search_memory(keyword, memory_type, days, str(project_path))
+    print(result)
+
+
 def main():
     """CLI 入口点"""
     parser = argparse.ArgumentParser(
@@ -184,6 +195,13 @@ def main():
     compress_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
     compress_parser.add_argument("-d", "--days", type=int, default=3, help="超过多少天视为旧记忆（默认3天）")
     
+    # search 命令
+    search_parser = subparsers.add_parser("search", help="在记忆中搜索关键词")
+    search_parser.add_argument("keyword", help="要搜索的关键词")
+    search_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
+    search_parser.add_argument("-t", "--type", choices=["all", "short", "long"], default="all", help="搜索范围")
+    search_parser.add_argument("-d", "--days", type=int, default=None, help="（仅短期记忆）限定搜索最近几天")
+
     args = parser.parse_args()
     
     try:
@@ -197,6 +215,8 @@ def main():
             write_memory(args.path, args.section, args.content, args.file, args.append)
         elif args.command == "compress":
             compress_memory_cmd(args.path, args.days)
+        elif args.command == "search":
+            search_memory_cmd(args.keyword, args.path, args.type, args.days)
         else:
             parser.print_help()
             sys.exit(1)

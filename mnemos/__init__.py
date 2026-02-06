@@ -22,6 +22,9 @@ from .compress import (
     get_memory_stats,
     extract_old_short_term,
 )
+from .search import (
+    search_memory,
+)
 
 __version__ = "0.1.0"
 
@@ -38,6 +41,8 @@ __all__ = [
     # 压缩
     "get_memory_stats",
     "extract_old_short_term",
+    # 搜索
+    "search_memory",
     # 路径
     "get_memory_dir",
     "get_short_term_path",
