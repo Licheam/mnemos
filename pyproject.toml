@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mnemos"
+version = "0.1.0"
+description = "AI Agent 记忆系统 - 让 AI 具备持久记忆"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "leachim" }
+]
+keywords = ["ai", "agent", "memory", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.scripts]
+mnemos = "mnemos.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mnemos"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"templates" = "share/mnemos/templates"

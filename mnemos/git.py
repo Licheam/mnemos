@@ -1,20 +1,29 @@
 """
-Skill: 总结最近的 Git 提交记录，写入短期记忆。
-触发时机：每次开新会话时调用一次。
+mnemos.git - Git 历史解析和短期记忆生成
 """
 
 import subprocess
 import datetime
-import sys
 import os
-
-# 确保能导入 parent 目录的 config
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import TARGET_REPO_PATH, SHORT_TERM_PATH, SHORT_TERM_DAYS
+from pathlib import Path
+from .memory import get_short_term_path
 
 
-def get_recent_commits(days: int = SHORT_TERM_DAYS, max_count: int = 20) -> list[dict]:
-    """从目标仓库获取最近 N 天的 git 提交"""
+def get_recent_commits(project_path: str = None, days: int = 7, max_count: int = 20) -> list[dict]:
+    """
+    从项目获取最近 N 天的 git 提交。
+    
+    Args:
+        project_path: 项目路径，默认为当前目录
+        days: 获取最近多少天的提交
+        max_count: 最大提交数量
+    
+    Returns:
+        提交列表，每个元素包含 hash, date, message, files_changed
+    """
+    if project_path is None:
+        project_path = os.getcwd()
+    
     since_date = (datetime.datetime.now() - datetime.timedelta(days=days)).strftime("%Y-%m-%d")
 
     result = subprocess.run(
@@ -24,9 +33,9 @@ def get_recent_commits(days: int = SHORT_TERM_DAYS, max_count: int = 20) -> list
             f"--max-count={max_count}",
             "--pretty=format:%H||%ad||%s",
             "--date=short",
-            "--stat",  # 包含文件变更统计
+            "--stat",
         ],
-        cwd=TARGET_REPO_PATH,
+        cwd=project_path,
         capture_output=True,
         text=True,
     )
@@ -34,13 +43,13 @@ def get_recent_commits(days: int = SHORT_TERM_DAYS, max_count: int = 20) -> list
     if result.returncode != 0:
         return []
 
-    commits = []
     raw = result.stdout.strip()
     if not raw:
         return []
 
-    # 解析每条 commit
+    commits = []
     current_commit = None
+    
     for line in raw.split("\n"):
         if "||" in line:
             parts = line.split("||", 2)
@@ -62,21 +71,25 @@ def get_recent_commits(days: int = SHORT_TERM_DAYS, max_count: int = 20) -> list
     return commits
 
 
-def get_commit_diff_summary(commit_hash: str) -> str:
-    """获取单个 commit 的 diff 摘要（仅统计信息，不含完整 diff）"""
-    result = subprocess.run(
-        ["git", "diff", "--stat", f"{commit_hash}~1", commit_hash],
-        cwd=TARGET_REPO_PATH,
-        capture_output=True,
-        text=True,
-    )
-    return result.stdout.strip() if result.returncode == 0 else ""
-
-
-def write_short_term_memory(commits: list[dict]) -> str:
-    """将 commit 摘要写入短期记忆文件"""
+def summarize_commits(project_path: str = None, days: int = 7) -> str:
+    """
+    从 git 历史生成短期记忆并写入文件。
+    
+    Args:
+        project_path: 项目路径，默认为当前目录
+        days: 获取最近多少天的提交
+    
+    Returns:
+        执行结果消息
+    """
+    if project_path is None:
+        project_path = os.getcwd()
+    
+    commits = get_recent_commits(project_path, days)
+    short_term_path = get_short_term_path(project_path)
+    
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-
+    
     lines = [
         "# 短期记忆",
         "",
@@ -100,25 +113,15 @@ def write_short_term_memory(commits: list[dict]) -> str:
             for c in by_date[date]:
                 lines.append(f"- `{c['hash']}` {c['message']}")
                 if c["files_changed"]:
-                    # 只保留最后的统计行
                     stats = [f for f in c["files_changed"] if "changed" in f]
                     if stats:
                         lines.append(f"  - {stats[-1]}")
             lines.append("")
 
     content = "\n".join(lines)
-
-    with open(SHORT_TERM_PATH, "w", encoding="utf-8") as f:
-        f.write(content)
+    
+    # 确保目录存在
+    short_term_path.parent.mkdir(parents=True, exist_ok=True)
+    short_term_path.write_text(content, encoding="utf-8")
 
     return f"短期记忆已更新，共记录 {len(commits)} 条提交。"
-
-
-def summarize_commits() -> str:
-    """主入口：获取最近提交并更新短期记忆"""
-    commits = get_recent_commits()
-    return write_short_term_memory(commits)
-
-
-if __name__ == "__main__":
-    print(summarize_commits())
