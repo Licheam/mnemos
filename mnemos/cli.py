@@ -24,7 +24,7 @@ def get_templates_dir() -> Path:
     raise FileNotFoundError("无法找到模板目录")
 
 
-def init_project(project_path: str = None, force: bool = False) -> None:
+def init_project(project_path: str = None, force: bool = False, only_skills: bool = False) -> None:
     """在项目中初始化 .memory 和 .agent/skills 目录"""
     if project_path is None:
         project_path = Path.cwd()
@@ -34,35 +34,40 @@ def init_project(project_path: str = None, force: bool = False) -> None:
     templates_dir = get_templates_dir()
     
     # 复制 .memory 目录
-    memory_src = templates_dir / ".memory"
-    memory_dst = project_path / ".memory"
-    
-    if memory_dst.exists() and not force:
-        print(f"· 目录已存在: {memory_dst}")
-    else:
-        if memory_dst.exists():
-            shutil.rmtree(memory_dst)
-        shutil.copytree(memory_src, memory_dst)
-        print(f"✓ 创建目录: {memory_dst}")
+    if not only_skills:
+        memory_src = templates_dir / ".memory"
+        memory_dst = project_path / ".memory"
+        
+        if memory_dst.exists() and not force:
+            print(f"· 目录已存在: {memory_dst}")
+        else:
+            if memory_dst.exists():
+                shutil.rmtree(memory_dst)
+            shutil.copytree(memory_src, memory_dst)
+            print(f"✓ 创建/更新目录: {memory_dst}")
     
     # 复制 .agent/skills 目录
     skills_src = templates_dir / ".agent" / "skills"
     skills_dst = project_path / ".agent" / "skills"
     
-    if skills_dst.exists() and not force:
+    if skills_dst.exists() and not force and not only_skills:
         print(f"· 目录已存在: {skills_dst}")
     else:
         skills_dst.parent.mkdir(parents=True, exist_ok=True)
         if skills_dst.exists():
             shutil.rmtree(skills_dst)
         shutil.copytree(skills_src, skills_dst)
-        print(f"✓ 创建目录: {skills_dst}")
+        print(f"✓ 创建/更新目录: {skills_dst}")
     
     print()
-    print(f"✓ Mnemos 已在 {project_path} 初始化完成！")
+    if only_skills:
+        print(f"✓ Mnemos Skill 已在 {project_path} 更新完成！")
+    else:
+        print(f"✓ Mnemos 已在 {project_path} 初始化完成！")
     print()
     print("下一步：")
-    print("  1. 编辑 .memory/long_term.md 填写项目基本信息")
+    if not only_skills:
+        print("  1. 编辑 .memory/long_term.md 填写项目基本信息")
     print("  2. 运行 `mnemos update` 生成短期记忆")
 
 
@@ -128,6 +133,7 @@ def main():
     init_parser = subparsers.add_parser("init", help="在项目中初始化记忆系统")
     init_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
     init_parser.add_argument("-f", "--force", action="store_true", help="强制覆盖已存在的文件")
+    init_parser.add_argument("--only-skills", action="store_true", help="只更新 skills 目录，不触碰记忆文件")
     
     # update 命令
     update_parser = subparsers.add_parser("update", help="从 git 历史更新短期记忆")
@@ -153,7 +159,7 @@ def main():
     args = parser.parse_args()
     
     if args.command == "init":
-        init_project(args.path, args.force)
+        init_project(args.path, args.force, args.only_skills)
     elif args.command == "update":
         update_memory(args.path)
     elif args.command == "show":

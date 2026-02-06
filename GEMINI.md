@@ -33,6 +33,7 @@ pip install -e .
 
 ### CLI Commands
 - `mnemos init [path]`: Sets up the `.memory/` and `.agent/skills/` directories in the target project.
+- `mnemos init [path] --only-skills`: Only updates the `.agent/skills/` directory without overwriting existing memory files.
 - `mnemos update [path]`: Summarizes Git commits from the last 7 days into `short_term.md`.
 - `mnemos show [path] [-t type]`: Displays memory content. Types: `all` (default), `short`, `long`.
 - `mnemos write [path] -s <section> -c <content> [-a]`: Updates or appends to a specific section in `long_term.md`.
