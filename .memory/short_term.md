@@ -1,14 +1,14 @@
 # 短期记忆
 
-*最后更新: 2026-02-06 17:44*
+*最后更新: 2026-02-06 17:54*
 
 ## 核心变动区域
 
-- `mnemos/cli.py` (7 次修改, +285/-35)
-- `.memory/long_term.md` (5 次修改, +103/-2)
-- `.memory/short_term.md` (5 次修改, +62/-27)
-- `.agent/skills/mnemos/SKILL.md` (5 次修改, +120/-16)
-- `templates/.agent/skills/mnemos/SKILL.md` (5 次修改, +125/-16)
+- `mnemos/cli.py` (8 次修改, +302/-35)
+- `.agent/skills/mnemos/SKILL.md` (6 次修改, +125/-16)
+- `.memory/long_term.md` (6 次修改, +118/-2)
+- `.memory/short_term.md` (6 次修改, +67/-31)
+- `templates/.agent/skills/mnemos/SKILL.md` (6 次修改, +126/-16)
 
 ## 最近活动
 
@@ -22,6 +22,7 @@
 - `2276946a` docs: update project documentation in README.md
 
 #### ✨ 功能
+- `ba1ba0d6` feat: Introduce a `doctor` command for project health checks and add its unit tests.
 - `45aebb0f` feat: Implement a configuration system, introduce memory search functionality, and enhance Git commit summarization with updated CLI commands.
 - `9f48f082` feat: Implement a configuration system, introduce memory search functionality, and enhance Git commit summarization with updated CLI commands.
 - `dc7a8e02` feat: Implement memory search functionality, enhance Git commit summarization with core change area analysis, and add comprehensive unit tests.
