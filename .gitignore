@@ -1,0 +1,10 @@
+# 字节码文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 常见的构建产物
+build/
+dist/
+*.egg-info/
