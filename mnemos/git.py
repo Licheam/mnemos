@@ -86,6 +86,10 @@ def summarize_commits(project_path: str = None, days: int = 7) -> str:
         project_path = os.getcwd()
     
     commits = get_recent_commits(project_path, days)
+    # 如果不是 git 仓库，get_recent_commits 会返回空，这里可以抛出异常
+    if not Path(project_path).joinpath(".git").exists():
+         raise FileNotFoundError(f"目录不是 Git 仓库: {project_path}")
+
     short_term_path = get_short_term_path(project_path)
     
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")

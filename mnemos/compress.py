@@ -60,10 +60,10 @@ def extract_old_short_term(days_threshold: int = 3, project_path: str = None) ->
     
     short_term_path = get_short_term_path(project_path)
     
-    try:
-        content = short_term_path.read_text(encoding="utf-8")
-    except FileNotFoundError:
-        return f"短期记忆文件不存在: {short_term_path}"
+    if not short_term_path.exists():
+        raise FileNotFoundError(f"短期记忆文件不存在: {short_term_path}")
+        
+    content = short_term_path.read_text(encoding="utf-8")
 
     cutoff = (datetime.datetime.now() - datetime.timedelta(days=days_threshold)).strftime("%Y-%m-%d")
 

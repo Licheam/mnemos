@@ -35,10 +35,9 @@ def read_short_term(project_path: str = None) -> str:
         短期记忆内容
     """
     path = get_short_term_path(project_path)
-    try:
-        return path.read_text(encoding="utf-8") or "短期记忆为空。"
-    except FileNotFoundError:
-        return f"短期记忆文件不存在: {path}\n请先运行 `mnemos init` 初始化。"
+    if not path.exists():
+        raise FileNotFoundError(f"短期记忆文件不存在: {path}\n请先运行 `mnemos init` 初始化。")
+    return path.read_text(encoding="utf-8") or "短期记忆为空。"
 
 
 def read_long_term(section: str = None, project_path: str = None) -> str:
@@ -53,10 +52,10 @@ def read_long_term(section: str = None, project_path: str = None) -> str:
         长期记忆内容
     """
     path = get_long_term_path(project_path)
-    try:
-        content = path.read_text(encoding="utf-8")
-    except FileNotFoundError:
-        return f"长期记忆文件不存在: {path}\n请先运行 `mnemos init` 初始化。"
+    if not path.exists():
+        raise FileNotFoundError(f"长期记忆文件不存在: {path}\n请先运行 `mnemos init` 初始化。")
+    
+    content = path.read_text(encoding="utf-8")
 
     if not section:
         return content or "长期记忆为空。"
@@ -76,7 +75,10 @@ def read_long_term(section: str = None, project_path: str = None) -> str:
         if capturing:
             result.append(line)
 
-    return "\n".join(result).strip() if result else f"未找到 section: {section}"
+    if not result:
+        raise ValueError(f"未找到 section: {section}")
+        
+    return "\n".join(result).strip()
 
 
 def read_memory(memory_type: str = "all", section: str = None, project_path: str = None) -> str:
@@ -124,14 +126,13 @@ def update_long_term_memory(section: str, content: str, mode: str = "replace", p
         执行结果消息
     """
     if section not in VALID_SECTIONS:
-        return f"无效的 section: {section}。可选值: {', '.join(VALID_SECTIONS)}"
+        raise ValueError(f"无效的 section: {section}。可选值: {', '.join(VALID_SECTIONS)}")
 
     path = get_long_term_path(project_path)
+    if not path.exists():
+        raise FileNotFoundError(f"长期记忆文件不存在: {path}\n请先运行 `mnemos init` 初始化。")
     
-    try:
-        lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
-    except FileNotFoundError:
-        return f"长期记忆文件不存在: {path}\n请先运行 `mnemos init` 初始化。"
+    lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
 
     section_header = f"## {section}"
     start_idx = None
@@ -146,7 +147,7 @@ def update_long_term_memory(section: str, content: str, mode: str = "replace", p
             break
 
     if start_idx is None:
-        return f"在长期记忆中未找到 section: {section}"
+        raise ValueError(f"在长期记忆中未找到 section: {section}")
 
     if end_idx is None:
         end_idx = len(lines)

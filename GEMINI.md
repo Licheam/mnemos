@@ -36,7 +36,9 @@ pip install -e .
 - `mnemos init [path] --only-skills`: Only updates the `.agent/skills/` directory without overwriting existing memory files.
 - `mnemos update [path]`: Summarizes Git commits from the last 7 days into `short_term.md`.
 - `mnemos show [path] [-t type]`: Displays memory content. Types: `all` (default), `short`, `long`.
-- `mnemos write [path] -s <section> -c <content> [-a]`: Updates or appends to a specific section in `long_term.md`.
+- `mnemos write [path] -s <section> [-c <content> | -f <file>] [-a]`: Updates or appends to a specific section in `long_term.md`.
+    - Use `-c -` to read from `stdin`.
+    - Use `-f <file>` to read from a file (safest for complex content).
 - `mnemos compress [path] [-d days]`: Extracts old short-term memory (older than 3 days by default) for summarization into long-term memory.
 
 ### Public Python API

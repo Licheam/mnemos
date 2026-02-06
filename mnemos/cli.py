@@ -93,19 +93,46 @@ def show_memory(project_path: str = None, memory_type: str = "all") -> None:
     print(content)
 
 
-def write_memory(project_path: str = None, section: str = None, content: str = None, append: bool = False) -> None:
+def write_memory(project_path: str = None, section: str = None, content: str = None, file: str = None, append: bool = False) -> None:
     """更新长期记忆"""
     from . import update_long_term_memory
     
     if project_path is None:
         project_path = Path.cwd()
     
-    if not section or not content:
-        print("错误：必须指定 --section 和 --content")
+    if not section:
+        print("错误：必须指定 --section")
         sys.exit(1)
-    
+
+    # 确定内容来源
+    final_content = ""
+    if file:
+        file_path = Path(file)
+        if not file_path.exists():
+            print(f"错误：文件不存在: {file}")
+            sys.exit(1)
+        final_content = file_path.read_text(encoding="utf-8")
+    elif content:
+        if content == "-":
+            if sys.stdin.isatty():
+                print(f"请输入内容到 [{section}] (按 Ctrl+D 结束):")
+            final_content = sys.stdin.read()
+        else:
+            final_content = content
+    else:
+        print("错误：必须指定 --content 或 --file")
+        sys.exit(1)
+
     mode = "append" if append else "replace"
-    result = update_long_term_memory(section, content, mode, str(project_path))
+    
+    # 交互式确认 (仅针对替换操作且在 TTY 环境)
+    if mode == "replace" and sys.stdin.isatty():
+        confirm = input(f"即将覆盖 [{section}] 的现有内容，确认继续？[y/N]: ")
+        if confirm.lower() != 'y':
+            print("操作已取消。")
+            return
+
+    result = update_long_term_memory(section, final_content, mode, str(project_path))
     print(result)
 
 
@@ -148,7 +175,8 @@ def main():
     write_parser = subparsers.add_parser("write", help="更新长期记忆")
     write_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
     write_parser.add_argument("-s", "--section", required=True, help="section 名称")
-    write_parser.add_argument("-c", "--content", required=True, help="要写入的内容")
+    write_parser.add_argument("-c", "--content", help="要写入的内容 (使用 '-' 从 stdin 读取)")
+    write_parser.add_argument("-f", "--file", help="从指定文件读取内容")
     write_parser.add_argument("-a", "--append", action="store_true", help="追加模式（默认替换）")
     
     # compress 命令
@@ -158,18 +186,25 @@ def main():
     
     args = parser.parse_args()
     
-    if args.command == "init":
-        init_project(args.path, args.force, args.only_skills)
-    elif args.command == "update":
-        update_memory(args.path)
-    elif args.command == "show":
-        show_memory(args.path, args.type)
-    elif args.command == "write":
-        write_memory(args.path, args.section, args.content, args.append)
-    elif args.command == "compress":
-        compress_memory_cmd(args.path, args.days)
-    else:
-        parser.print_help()
+    try:
+        if args.command == "init":
+            init_project(args.path, args.force, args.only_skills)
+        elif args.command == "update":
+            update_memory(args.path)
+        elif args.command == "show":
+            show_memory(args.path, args.type)
+        elif args.command == "write":
+            write_memory(args.path, args.section, args.content, args.file, args.append)
+        elif args.command == "compress":
+            compress_memory_cmd(args.path, args.days)
+        else:
+            parser.print_help()
+            sys.exit(1)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"错误: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"发生意外错误: {e}")
         sys.exit(1)
 
 

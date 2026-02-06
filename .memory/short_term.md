@@ -1,11 +1,17 @@
 # 短期记忆
 
-*最后更新: 2026-02-06 14:50*
+*最后更新: 2026-02-06 16:52*
 
 ## 最近活动
 
 ### 2026-02-06
 
+- `e4f0a471` feat: Add `--only-skills` option to `mnemos init` to update skills without overwriting existing memory files.
+  - 3 files changed, 40 insertions(+), 25 deletions(-)
+- `e23b5db0` docs: add GEMINI.md with comprehensive project context and instructions for AI agents.
+  - 2 files changed, 81 insertions(+), 9 deletions(-)
+- `a29b8b2c` feat: Add initial markdown files for short-term and long-term memory, and mnemos skill documentation.
+  - 3 files changed, 115 insertions(+)
 - `2276946a` docs: update project documentation in README.md
   - 1 file changed, 15 deletions(-)
 - `a55b30c8` feat: add MIT License file

@@ -49,14 +49,17 @@ mnemos show -t short
 
 当对话中出现值得长期记住的信息时（如新的架构决策、代码约定、发现的坑），应写入长期记忆。
 
-替换某个 section 的内容：
-```bash
-mnemos write -s "架构决策" -c "### 使用 SQLite\n选择 SQLite 作为本地数据库，因为部署简单且足够满足需求。"
-```
+**AI Agent 推荐流程（最稳妥）：**
+1. 使用 `write_file` 工具创建一个包含更新内容的临时文件（如 `temp_memory.md`）。
+2. 执行 `mnemos write -s "Section名称" -f temp_memory.md [-a]`。
+3. 执行 `rm temp_memory.md` 删除临时文件。
+4. 执行 `mnemos update` 同步最新的记忆状态。
 
-追加到某个 section：
+这种方式可以彻底避免 Markdown 中的反引号、多行文本被 Shell 误解析的问题。
+
+**命令行快捷方式：**
 ```bash
-mnemos write -s "重要约束与注意事项" -c "### 并发限制\n数据库连接池不要超过 20。" -a
+mnemos write -s "架构决策" -f decision.md
 ```
 
 **可用 section**:
