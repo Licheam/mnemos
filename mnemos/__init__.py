@@ -24,6 +24,9 @@ from .compress import (
 from .search import (
     search_memory,
 )
+from .doctor import (
+    run_doctor,
+)
 
 __version__ = "0.1.0"
 
@@ -41,6 +44,8 @@ __all__ = [
     "extract_old_short_term",
     # 搜索
     "search_memory",
+    # 诊断
+    "run_doctor",
     # 路径
     "get_memory_dir",
     "get_short_term_path",

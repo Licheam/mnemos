@@ -1,14 +1,14 @@
 # 短期记忆
 
-*最后更新: 2026-02-06 17:40*
+*最后更新: 2026-02-06 17:44*
 
 ## 核心变动区域
 
-- `mnemos/cli.py` (6 次修改, +278/-35)
+- `mnemos/cli.py` (7 次修改, +285/-35)
+- `.memory/long_term.md` (5 次修改, +103/-2)
+- `.memory/short_term.md` (5 次修改, +62/-27)
 - `.agent/skills/mnemos/SKILL.md` (5 次修改, +120/-16)
 - `templates/.agent/skills/mnemos/SKILL.md` (5 次修改, +125/-16)
-- `.memory/long_term.md` (4 次修改, +95/-2)
-- `.memory/short_term.md` (4 次修改, +55/-21)
 
 ## 最近活动
 
@@ -22,6 +22,7 @@
 - `2276946a` docs: update project documentation in README.md
 
 #### ✨ 功能
+- `45aebb0f` feat: Implement a configuration system, introduce memory search functionality, and enhance Git commit summarization with updated CLI commands.
 - `9f48f082` feat: Implement a configuration system, introduce memory search functionality, and enhance Git commit summarization with updated CLI commands.
 - `dc7a8e02` feat: Implement memory search functionality, enhance Git commit summarization with core change area analysis, and add comprehensive unit tests.
 - `4d981dec` feat: Enhance `mnemos write` command to accept content from stdin or a file.

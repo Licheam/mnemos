@@ -175,6 +175,17 @@ def search_memory_cmd(keyword: str, project_path: str = None, memory_type: str =
     print(result)
 
 
+def doctor_cmd(project_path: str = None) -> None:
+    """运行项目健康检查"""
+    from . import run_doctor
+    
+    if project_path is None:
+        project_path = Path.cwd()
+        
+    result = run_doctor(str(project_path))
+    print(result)
+
+
 def main():
     """CLI 入口点"""
     parser = argparse.ArgumentParser(
@@ -219,6 +230,10 @@ def main():
     search_parser.add_argument("-t", "--type", choices=["all", "short", "long"], default="all", help="搜索范围")
     search_parser.add_argument("-d", "--days", type=int, default=None, help="（仅短期记忆）限定搜索最近几天")
 
+    # doctor 命令
+    doctor_parser = subparsers.add_parser("doctor", help="运行项目健康检查")
+    doctor_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
+
     args = parser.parse_args()
     
     try:
@@ -234,6 +249,8 @@ def main():
             compress_memory_cmd(args.path, args.days)
         elif args.command == "search":
             search_memory_cmd(args.keyword, args.path, args.type, args.days)
+        elif args.command == "doctor":
+            doctor_cmd(args.path)
         else:
             parser.print_help()
             sys.exit(1)

@@ -5,8 +5,7 @@ from mnemos.memory import (
     get_memory_dir,
     read_short_term,
     read_long_term,
-    update_long_term_memory,
-    VALID_SECTIONS
+    update_long_term_memory
 )
 
 @pytest.fixture
