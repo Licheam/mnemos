@@ -60,21 +60,6 @@ update_long_term_memory(
 )
 ```
 
-## 目录结构
-
-```
-mnemos/                 ← 本仓库（pip 安装）
-├── mnemos/             ← 核心库
-└── templates/          ← 初始化模板
-
-your-project/           ← 目标项目（运行 mnemos init 后）
-├── .memory/            ← 记忆文件
-│   ├── long_term.md
-│   └── short_term.md
-└── .agent/skills/      ← Skill 文件
-    └── SKILL.md
-```
-
 ## License
 
 MIT
