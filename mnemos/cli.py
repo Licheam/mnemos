@@ -88,6 +88,33 @@ def show_memory(project_path: str = None, memory_type: str = "all") -> None:
     print(content)
 
 
+def write_memory(project_path: str = None, section: str = None, content: str = None, append: bool = False) -> None:
+    """更新长期记忆"""
+    from . import update_long_term_memory
+    
+    if project_path is None:
+        project_path = Path.cwd()
+    
+    if not section or not content:
+        print("错误：必须指定 --section 和 --content")
+        sys.exit(1)
+    
+    mode = "append" if append else "replace"
+    result = update_long_term_memory(section, content, mode, str(project_path))
+    print(result)
+
+
+def compress_memory_cmd(project_path: str = None, days: int = 3) -> None:
+    """压缩旧的短期记忆"""
+    from . import extract_old_short_term
+    
+    if project_path is None:
+        project_path = Path.cwd()
+    
+    result = extract_old_short_term(days, str(project_path))
+    print(result)
+
+
 def main():
     """CLI 入口点"""
     parser = argparse.ArgumentParser(
@@ -111,6 +138,18 @@ def main():
     show_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
     show_parser.add_argument("-t", "--type", choices=["all", "short", "long"], default="all", help="记忆类型")
     
+    # write 命令
+    write_parser = subparsers.add_parser("write", help="更新长期记忆")
+    write_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
+    write_parser.add_argument("-s", "--section", required=True, help="section 名称")
+    write_parser.add_argument("-c", "--content", required=True, help="要写入的内容")
+    write_parser.add_argument("-a", "--append", action="store_true", help="追加模式（默认替换）")
+    
+    # compress 命令
+    compress_parser = subparsers.add_parser("compress", help="压缩旧的短期记忆")
+    compress_parser.add_argument("path", nargs="?", default=None, help="项目路径（默认当前目录）")
+    compress_parser.add_argument("-d", "--days", type=int, default=3, help="超过多少天视为旧记忆（默认3天）")
+    
     args = parser.parse_args()
     
     if args.command == "init":
@@ -119,6 +158,10 @@ def main():
         update_memory(args.path)
     elif args.command == "show":
         show_memory(args.path, args.type)
+    elif args.command == "write":
+        write_memory(args.path, args.section, args.content, args.append)
+    elif args.command == "compress":
+        compress_memory_cmd(args.path, args.days)
     else:
         parser.print_help()
         sys.exit(1)
@@ -126,3 +169,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
