@@ -30,6 +30,10 @@ DEFAULT_CONFIG = {
     },
     "search": {
         "context_lines": 1
+    },
+    "compression": {
+        "max_lines": 500,
+        "max_kb": 50
     }
 }
 

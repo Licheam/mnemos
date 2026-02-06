@@ -6,6 +6,37 @@ import os
 import datetime
 from pathlib import Path
 from .memory import get_short_term_path, get_long_term_path
+from .config import load_config
+
+
+def check_compression_needed(project_path: str = None) -> tuple[bool, str]:
+    """
+    检查短期记忆是否需要压缩。
+    
+    Returns:
+        (needs_compression, reason_message)
+    """
+    if project_path is None:
+        project_path = os.getcwd()
+        
+    config = load_config(project_path)
+    max_lines = config.get("compression", {}).get("max_lines", 500)
+    max_kb = config.get("compression", {}).get("max_kb", 50)
+    
+    path = get_short_term_path(project_path)
+    if not path.exists():
+        return False, ""
+        
+    content = path.read_text(encoding="utf-8")
+    line_count = len(content.splitlines())
+    size_kb = path.stat().st_size / 1024
+    
+    if line_count > max_lines:
+        return True, f"短期记忆行数 ({line_count}) 已超过阈值 ({max_lines})"
+    if size_kb > max_kb:
+        return True, f"短期记忆大小 ({size_kb:.1f} KB) 已超过阈值 ({max_kb} KB)"
+        
+    return False, ""
 
 
 def get_memory_stats(project_path: str = None) -> dict:

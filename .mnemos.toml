@@ -22,3 +22,7 @@ ignore_files = ["*.lock", "package-lock.json", ".gitignore"]
 [search]
 # 搜索时默认显示的上下文行数
 context_lines = 1
+
+[compression]
+max_lines = 500
+max_kb = 50

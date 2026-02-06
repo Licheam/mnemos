@@ -84,12 +84,19 @@ def init_project(project_path: str = None, force: bool = False, only_skills: boo
 def update_memory(project_path: str = None) -> None:
     """更新项目的短期记忆"""
     from . import summarize_commits
+    from .compress import check_compression_needed
     
     if project_path is None:
         project_path = Path.cwd()
     
     result = summarize_commits(str(project_path))
     print(result)
+    
+    # 检查是否需要压缩
+    needs_comp, reason = check_compression_needed(str(project_path))
+    if needs_comp:
+        print(f"\n[⚠️ 提醒] {reason}")
+        print("建议运行 `mnemos compress` 来归档旧记忆并减小上下文负担。")
 
 
 def show_memory(project_path: str = None, memory_type: str = "all") -> None:
