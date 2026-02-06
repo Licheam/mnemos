@@ -9,7 +9,6 @@ from .memory import (
     read_short_term,
     read_long_term,
     update_long_term_memory,
-    VALID_SECTIONS,
     get_memory_dir,
     get_short_term_path,
     get_long_term_path,
@@ -34,7 +33,6 @@ __all__ = [
     "read_short_term",
     "read_long_term",
     "update_long_term_memory",
-    "VALID_SECTIONS",
     # Git 历史
     "summarize_commits",
     "get_recent_commits",

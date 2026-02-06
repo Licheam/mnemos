@@ -25,7 +25,7 @@ def get_templates_dir() -> Path:
 
 
 def init_project(project_path: str = None, force: bool = False, only_skills: bool = False) -> None:
-    """在项目中初始化 .memory 和 .agent/skills 目录"""
+    """在项目中初始化 .memory, .agent/skills 和 .mnemos.toml"""
     if project_path is None:
         project_path = Path.cwd()
     else:
@@ -33,6 +33,16 @@ def init_project(project_path: str = None, force: bool = False, only_skills: boo
     
     templates_dir = get_templates_dir()
     
+    # 写入配置文件 (.mnemos.toml)
+    if not only_skills:
+        config_src = templates_dir / ".mnemos.toml"
+        config_dst = project_path / ".mnemos.toml"
+        if config_dst.exists() and not force:
+            print(f"· 配置文件已存在: {config_dst}")
+        else:
+            shutil.copy2(config_src, config_dst)
+            print(f"✓ 创建/更新配置文件: {config_dst}")
+
     # 复制 .memory 目录
     if not only_skills:
         memory_src = templates_dir / ".memory"

@@ -39,6 +39,16 @@ mnemos show -t long
 mnemos show
 ```
 
+在记忆中搜索关键词（跨长期和短期）：
+```bash
+mnemos search "关键词"
+```
+
+限定搜索最近 7 天的短期记忆：
+```bash
+mnemos search "关键词" -t short -d 7
+```
+
 仅读取长期记忆：
 ```bash
 mnemos show -t long

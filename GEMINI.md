@@ -4,9 +4,10 @@ This document provides instructional context for Gemini when working on the Mnem
 
 ## Project Overview
 
-Mnemos is a Python-based library and CLI tool designed to provide AI agents with a persistent memory system. It organizes memory into two main categories:
-- **Short-term Memory (`short_term.md`):** Automatically generated from Git commit history, tracking recent changes and activities.
-- **Long-term Memory (`long_term.md`):** Structured storage for high-level project information like architectural decisions, tech stack, and coding conventions.
+Mnemos is a Python-based library and CLI tool designed to provide AI agents with a persistent memory system. It organizes memory into:
+- **Short-term Memory (`short_term.md`):** Automatically generated from Git commit history, tracking recent activities with hotspot analysis and commit type grouping.
+- **Long-term Memory (`long_term.md`):** Structured storage for high-level project information.
+- **Configuration (`.mnemos.toml`):** Project-specific settings for valid sections, git analysis windows, and search parameters.
 
 The system is designed to be lightweight, human-readable (Markdown), and integrated directly into the target project's repository.
 
@@ -19,7 +20,9 @@ The system is designed to be lightweight, human-readable (Markdown), and integra
 ### Architecture
 - `mnemos/cli.py`: Command-line interface logic.
 - `mnemos/memory.py`: Core functions for reading and writing memory files.
-- `mnemos/git.py`: Integration with Git to extract and summarize recent activities.
+- `mnemos/git.py`: Integration with Git to extract and summarize recent activities with smart categorization.
+- `mnemos/search.py`: Cross-memory full-text search engine.
+- `mnemos/config.py`: Configuration management from `.mnemos.toml`.
 - `mnemos/compress.py`: Utilities for managing memory growth and transitioning old short-term memory to long-term storage.
 - `templates/`: Contains the default directory structure and files used when initializing a new project.
 
@@ -29,17 +32,17 @@ The system is designed to be lightweight, human-readable (Markdown), and integra
 ```bash
 # Install in editable mode
 pip install -e .
+# Important: When developing, always pipx reinstall mnemos after changes!
 ```
 
 ### CLI Commands
-- `mnemos init [path]`: Sets up the `.memory/` and `.agent/skills/` directories in the target project.
-- `mnemos init [path] --only-skills`: Only updates the `.agent/skills/` directory without overwriting existing memory files.
-- `mnemos update [path]`: Summarizes Git commits from the last 7 days into `short_term.md`.
-- `mnemos show [path] [-t type]`: Displays memory content. Types: `all` (default), `short`, `long`.
-- `mnemos write [path] -s <section> [-c <content> | -f <file>] [-a]`: Updates or appends to a specific section in `long_term.md`.
-    - Use `-c -` to read from `stdin`.
-    - Use `-f <file>` to read from a file (safest for complex content).
-- `mnemos compress [path] [-d days]`: Extracts old short-term memory (older than 3 days by default) for summarization into long-term memory.
+- `mnemos init [path]`: Sets up the memory directories and `.mnemos.toml`.
+- `mnemos init [path] --only-skills`: Updates `.agent/skills/` without overwriting memory.
+- `mnemos update [path]`: Summarizes Git commits into structured `short_term.md`.
+- `mnemos show [path] [-t type]`: Displays memory content.
+- `mnemos search "keyword"`: Searches across all memory files with context.
+- `mnemos write [path] -s <section> [-c <content> | -f <file>] [-a]`: Updates or appends to long-term sections.
+- `mnemos compress [path] [-d days]`: Extracts old memory for summarization.
 
 ### Public Python API
 The core functionality is exposed via the `mnemos` package:

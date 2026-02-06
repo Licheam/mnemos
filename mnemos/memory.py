@@ -5,6 +5,7 @@ mnemos.memory - 记忆读写核心函数
 import os
 import datetime
 from pathlib import Path
+from .config import load_config
 
 
 def get_memory_dir(project_path: str = None) -> Path:
@@ -103,21 +104,12 @@ def read_memory(memory_type: str = "all", section: str = None, project_path: str
         return f"{long}\n\n---\n\n{short}"
 
 
-VALID_SECTIONS = [
-    "项目概述",
-    "架构决策",
-    "代码风格与约定",
-    "技术选型",
-    "重要约束与注意事项",
-]
-
-
 def update_long_term_memory(section: str, content: str, mode: str = "replace", project_path: str = None) -> str:
     """
     更新长期记忆中的指定 section。
     
     Args:
-        section: section 名称（项目概述/架构决策/代码风格与约定/技术选型/重要约束与注意事项）
+        section: section 名称
         content: 要写入的内容（markdown 格式）
         mode: "replace" 替换 | "append" 追加
         project_path: 项目路径，默认为当前目录
@@ -125,8 +117,11 @@ def update_long_term_memory(section: str, content: str, mode: str = "replace", p
     Returns:
         执行结果消息
     """
-    if section not in VALID_SECTIONS:
-        raise ValueError(f"无效的 section: {section}。可选值: {', '.join(VALID_SECTIONS)}")
+    config = load_config(project_path)
+    valid_sections = config["memory"]["valid_sections"]
+
+    if section not in valid_sections:
+        raise ValueError(f"无效的 section: {section}。当前配置允许的值: {', '.join(valid_sections)}")
 
     path = get_long_term_path(project_path)
     if not path.exists():

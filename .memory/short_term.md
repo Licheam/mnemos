@@ -1,14 +1,14 @@
 # 短期记忆
 
-*最后更新: 2026-02-06 17:18*
+*最后更新: 2026-02-06 17:34*
 
 ## 核心变动区域
 
-- `mnemos/cli.py` (4 次修改, +247/-34)
-- `.agent/skills/mnemos/SKILL.md` (3 次修改, +105/-15)
-- `GEMINI.md` (3 次修改, +68/-1)
-- `templates/.agent/skills/mnemos/SKILL.md` (3 次修改, +105/-15)
-- `README.md` (3 次修改, +181/-116)
+- `mnemos/cli.py` (5 次修改, +267/-34)
+- `.agent/skills/mnemos/SKILL.md` (4 次修改, +110/-16)
+- `README.md` (4 次修改, +196/-116)
+- `templates/.agent/skills/mnemos/SKILL.md` (4 次修改, +120/-16)
+- `.memory/long_term.md` (3 次修改, +84/-2)
 
 ## 最近活动
 
@@ -22,6 +22,7 @@
 - `2276946a` docs: update project documentation in README.md
 
 #### ✨ 功能
+- `dc7a8e02` feat: Implement memory search functionality, enhance Git commit summarization with core change area analysis, and add comprehensive unit tests.
 - `4d981dec` feat: Enhance `mnemos write` command to accept content from stdin or a file.
 - `e4f0a471` feat: Add `--only-skills` option to `mnemos init` to update skills without overwriting existing memory files.
 - `a29b8b2c` feat: Add initial markdown files for short-term and long-term memory, and mnemos skill documentation.

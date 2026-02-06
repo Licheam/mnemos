@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from collections import Counter
 from .memory import get_short_term_path
+from .config import load_config
 
 
 def parse_commit_type(message: str) -> str:
@@ -20,7 +21,7 @@ def parse_commit_type(message: str) -> str:
     return "other"
 
 
-def get_recent_commits(project_path: str = None, days: int = 7, max_count: int = 50) -> list[dict]:
+def get_recent_commits(project_path: str = None, days: int = None, max_count: int = None) -> list[dict]:
     """
     从项目获取最近 N 天的 git 提交，包含详细的文件变更数据。
     
@@ -34,6 +35,10 @@ def get_recent_commits(project_path: str = None, days: int = 7, max_count: int =
     """
     if project_path is None:
         project_path = os.getcwd()
+
+    config = load_config(project_path)
+    days = days if days is not None else config["git"]["days"]
+    max_count = max_count if max_count is not None else config["git"]["max_count"]
     
     since_date = (datetime.datetime.now() - datetime.timedelta(days=days)).strftime("%Y-%m-%d")
 
@@ -134,7 +139,7 @@ def aggregate_activity(commits: list[dict]) -> dict:
     }
 
 
-def summarize_commits(project_path: str = None, days: int = 7) -> str:
+def summarize_commits(project_path: str = None, days: int = None) -> str:
     """
     从 git 历史生成结构化的短期记忆。
     
@@ -150,6 +155,9 @@ def summarize_commits(project_path: str = None, days: int = 7) -> str:
     
     if not Path(project_path).joinpath(".git").exists():
          raise FileNotFoundError(f"目录不是 Git 仓库: {project_path}")
+
+    config = load_config(project_path)
+    days = days if days is not None else config["git"]["days"]
 
     commits = get_recent_commits(project_path, days)
     short_term_path = get_short_term_path(project_path)
